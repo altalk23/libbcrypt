@@ -1,22 +1,26 @@
-CC = gcc
-CFLAGS = $(shell grep '^CFLAGS = ' crypt_blowfish/Makefile | cut -d= -f2-)
-.PHONY: crypt_blowfish
+all:
+	$(MAKE) -C src/lib
+	$(MAKE) -C src/test
 
-all: bcrypt.a
+install:
+	$(MAKE) -C src/lib install
 
-test: bcrypt.c crypt_blowfish
-	$(CC) $(CFLAGS) -DTEST_BCRYPT -c bcrypt.c
-	$(CC) -o bcrypt_test bcrypt.o crypt_blowfish/*.o
-
-bcrypt.a: bcrypt.o crypt_blowfish
-	ar r bcrypt.a bcrypt.o crypt_blowfish/*.o
-
-bcrypt.o: bcrypt.c
-	$(CC) $(CFLAGS) -c bcrypt.c
-
-crypt_blowfish:
-	$(MAKE) -C crypt_blowfish
+check: all
+	$(MAKE) -C src/test check
 
 clean:
-	rm -f *.o bcrypt_test bcrypt.a *~ core
-	$(MAKE) -C crypt_blowfish clean
+	$(MAKE) -C src/lib  clean
+	$(MAKE) -C src/test clean
+
+distclean: clean
+
+crypt_blowfish-1.3.tar.gz:
+	curl -LO https://www.openwall.com/crypt/$@
+
+uncompress: crypt_blowfish-1.3.tar.gz
+	tar vxf $< -C src/lib && \
+	cd src/lib && \
+	rm -rf crypt_blowfish && \
+	mv crypt_blowfish-1.3 crypt_blowfish
+
+.PHONY: all install clean
