@@ -23,7 +23,7 @@ bcrypt.o: bcrypt.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $^
 
 crypt_blowfish/%.o:
-	$(MAKE) -C crypt_blowfish
+	$(MAKE) -C crypt_blowfish TARGET_ARCH=$(TARGET_ARCH)
 
 install: all
 	install -d                 $(PREFIX)/{include,lib}

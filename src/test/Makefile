@@ -1,8 +1,8 @@
 CC     ?= cc
 
-override CFLAGS   = -fpic
-override CPPFLAGS = -I../lib
-override LDFLAGS  = -L../lib -lbcrypt
+override CFLAGS   += -fpic
+override CPPFLAGS += -I../lib
+override LDFLAGS  += -L../lib -lbcrypt
 
 test.o: test.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DTEST_BCRYPT -c $^
