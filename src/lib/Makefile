@@ -4,8 +4,15 @@ AR     ?= ar
 CFLAGS  = $(shell grep '^CFLAGS = ' crypt_blowfish/Makefile | cut -d= -f2-)
 ARFLAGS = rs
 
-OBJS=$(patsubst %.c, %.o, bcrypt.c $(wildcard crypt_blowfish/*.c)) crypt_blowfish/x86.o
+OBJS=$(patsubst %.c, %.o, bcrypt.c $(wildcard crypt_blowfish/*.c))
 
+TARGET_ARCH=$(shell uname -m)
+
+ifeq ($(findstring x86, $(TARGET_ARCH)), x86)
+    OBJS += crypt_blowfish/x86.o
+else ifneq ($(filter i%86, $(TARGET_ARCH)),)
+    OBJS += crypt_blowfish/x86.o
+endif
 
 all: libbcrypt.a
 
