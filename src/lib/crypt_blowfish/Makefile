@@ -22,8 +22,13 @@ CFLAGS = -W -Wall -Wbad-function-cast -Wcast-align -Wcast-qual -Wmissing-prototy
 ASFLAGS = -c
 LDFLAGS = -s
 
-BLOWFISH_OBJS = \
-	crypt_blowfish.o x86.o
+BLOWFISH_OBJS = crypt_blowfish.o
+
+ifeq ($(findstring x86, $(TARGET_ARCH)), x86)
+    BLOWFISH_OBJS += x86.o
+else ifneq ($(filter i%86, $(TARGET_ARCH)),)
+    BLOWFISH_OBJS += x86.o
+endif
 
 CRYPT_OBJS = \
 	$(BLOWFISH_OBJS) crypt_gensalt.o wrapper.o
