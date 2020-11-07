@@ -24,10 +24,13 @@ LDFLAGS = -s
 
 BLOWFISH_OBJS = crypt_blowfish.o
 
+ENABLE_ASM = 1
+ifeq ($(ENABLE_ASM), 1)
 ifeq ($(findstring x86, $(TARGET_ARCH)), x86)
     BLOWFISH_OBJS += x86.o
 else ifneq ($(filter i%86, $(TARGET_ARCH)),)
     BLOWFISH_OBJS += x86.o
+endif
 endif
 
 CRYPT_OBJS = \
