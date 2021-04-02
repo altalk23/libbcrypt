@@ -1,8 +1,10 @@
 file(GLOB_RECURSE SRCS "*.c")
 
-if (ENABLE_ASM)
-    if (CMAKE_SYSTEM_PROCESSOR MATCHES "^(i.86|x86?)$")
-        set(SRCS "${SRCS} crypt_blowfish/x86.S")
+if (BUILD_ASM)
+    if ((${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86") OR (${CMAKE_SYSTEM_PROCESSOR} MATCHES "^i[0-9]86$"))
+        message("METCHES")
+        enable_language(ASM)
+        list(APPEND SRCS "${CMAKE_CURRENT_SOURCE_DIR}/crypt_blowfish/x86.S")
     endif()
 endif()
 
