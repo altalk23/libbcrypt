@@ -17,8 +17,5 @@ include_directories(crypt_blowfish)
 add_library(bcrypt_a STATIC ${SRCS})
 add_library(bcrypt   SHARED ${SRCS})
 
-include(GNUInstallDirs)
-
-install(TARGETS bcrypt LIBRARY                            DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES   ${CMAKE_CURRENT_BINARY_DIR}/libbcrypt_a.a DESTINATION ${CMAKE_INSTALL_LIBDIR} RENAME libbcrypt.a)
-install(FILES   ${CMAKE_CURRENT_SOURCE_DIR}/bcrypt.h      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+target_include_directories(bcrypt PUBLIC ${bcrypt_SOURCE_DIR}/include)
+target_include_directories(bcrypt_a PUBLIC ${bcrypt_SOURCE_DIR}/include)
