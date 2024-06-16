@@ -22,7 +22,7 @@
 #endif
 #include <errno.h>
 
-#include "bcrypt.h"
+#include <bcrypt/bcrypt.h>
 #include "crypt_blowfish/ow-crypt.h"
 
 #define RANDBYTES (16)
