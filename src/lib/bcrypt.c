@@ -15,13 +15,19 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
 #include <unistd.h>
+#endif
 #include <errno.h>
 
 #include "bcrypt.h"
 #include "crypt_blowfish/ow-crypt.h"
 
 #define RANDBYTES (16)
+
+#ifndef _WIN32
 
 static int try_close(int fd)
 {
@@ -60,6 +66,8 @@ static int try_read(int fd, char *out, size_t count)
 
 	return 0;
 }
+
+#endif
 
 /*
  * This is a best effort implementation. Nothing prevents a compiler from
@@ -101,6 +109,21 @@ int bcrypt_gensalt(int factor, char salt[BCRYPT_HASHSIZE])
 	int workf;
 	char *aux;
 
+	#ifdef _WIN32
+	
+	HCRYPTPROV hCryptProv;
+	if (!CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+		return 1;
+	
+	if (!CryptGenRandom(hCryptProv, RANDBYTES, (BYTE *)input)) {
+		CryptReleaseContext(hCryptProv, 0);
+		return 2;
+	}
+
+	CryptReleaseContext(hCryptProv, 0);
+
+	#else
+
 	fd = open("/dev/urandom", O_RDONLY);
 	if (fd == -1)
 		return 1;
@@ -113,6 +136,8 @@ int bcrypt_gensalt(int factor, char salt[BCRYPT_HASHSIZE])
 
 	if (try_close(fd) != 0)
 		return 3;
+
+	#endif
 
 	/* Generate salt. */
 	workf = (factor < 4 || factor > 31)?12:factor;
